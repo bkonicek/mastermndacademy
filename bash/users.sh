@@ -3,6 +3,9 @@
 USERNAME=$2
 PASSWORD=$3
 
+# takes exit code and a message to print.
+# If the exit code is not 0 it will print the error message
+# and exit the script
 checkError()
 {
     ERROR_CODE=$1
@@ -37,7 +40,7 @@ addUser()
 
     # mail credentials file to user and then delete it
     mail -A ./credentials.txt -s "Here are your credentials" $USERNAME@ourcooltechcompany.com < /dev/null
-    #checkError $? "Failed sending mail to $USERNAME"
+    checkError $? "Failed sending mail to $USERNAME"
     
     rm -rf ./credentials.txt
 
@@ -51,7 +54,7 @@ addUser()
 deleteUser()
 {
     userdel -r $USERNAME
-    chechError $? "Failed to delete user $USERNAME"
+    checkError $? "Failed to delete user $USERNAME"
     echo "$USERNAME has been deleted"
 }
 
