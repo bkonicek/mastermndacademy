@@ -26,21 +26,21 @@ addUser()
         PASSWORD=$(date +%s | sha256sum | base64 | head -c 32)
     fi
 
-    # create a text file with username and password, then create the user and set the password
-    echo "Hello $USERNAME, here are your credentials to log in." >> credentials.txt
-    echo "" >> credentials.txt
-    echo $USERNAME >> credentials.txt
-    echo $PASSWORD >> credentials.txt
-
     useradd -m $USERNAME
     checkError $? "Could not create $USERNAME"
 
     echo $USERNAME:$PASSWORD | chpasswd
     checkError $? "Unable to set password for $USERNAME"
 
+        # create a text file with username and password, then create the user and set the password
+    echo "Hello $USERNAME, here are your credentials to log in." >> credentials.txt
+    echo "" >> credentials.txt
+    echo $USERNAME >> credentials.txt
+    echo $PASSWORD >> credentials.txt
+
     # mail credentials file to user and then delete it
     mail -A ./credentials.txt -s "Here are your credentials" $USERNAME@ourcooltechcompany.com < /dev/null
-    checkError $? "Failed sending mail to $USERNAME"
+    #checkError $? "Failed sending mail to $USERNAME@ourcooltechcompany.com"
     
     rm -rf ./credentials.txt
 
