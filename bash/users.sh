@@ -20,7 +20,19 @@ addUser()
 
     useradd -m $USERNAME
 
+    if [ $? -ne 0 ]
+    then
+        echo "Could not create $USERNAME"
+        exit 1
+    fi
+
     echo $USERNAME:$PASSWORD | chpasswd
+
+    if [ $? -ne 0 ]
+    then
+        echo "Unable to set password for $USERNAME"
+        exit 1
+    fi
 
     # mail credentials file to user and then delete it
     mail -A ./credentials.txt -s "Here are your credentials" $USERNAME@ourcooltechcompany.com < /dev/null
