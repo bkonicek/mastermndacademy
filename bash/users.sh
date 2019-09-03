@@ -3,6 +3,17 @@
 USERNAME=$2
 PASSWORD=$3
 
+checkError()
+{
+    ERROR_CODE=$1
+    MESSAGE=$2
+    if [ $ERROR_CODE -ne 0 ]
+    then
+        echo $MESSAGE
+        exit 1
+    fi
+}
+
 addUser()
 {
 
@@ -19,23 +30,15 @@ addUser()
     echo $PASSWORD >> credentials.txt
 
     useradd -m $USERNAME
-
-    if [ $? -ne 0 ]
-    then
-        echo "Could not create $USERNAME"
-        exit 1
-    fi
+    checkError $? "Could not create $USERNAME"
 
     echo $USERNAME:$PASSWORD | chpasswd
-
-    if [ $? -ne 0 ]
-    then
-        echo "Unable to set password for $USERNAME"
-        exit 1
-    fi
+    checkError $? "Unable to set password for $USERNAME"
 
     # mail credentials file to user and then delete it
     mail -A ./credentials.txt -s "Here are your credentials" $USERNAME@ourcooltechcompany.com < /dev/null
+    #checkError $? "Failed sending mail to $USERNAME"
+    
     rm -rf ./credentials.txt
 
     # Copy rules file into user's home directory
@@ -48,6 +51,7 @@ addUser()
 deleteUser()
 {
     userdel -r $USERNAME
+    chechError $? "Failed to delete user $USERNAME"
     echo "$USERNAME has been deleted"
 }
 
