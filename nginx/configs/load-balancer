@@ -1,0 +1,51 @@
+# Define which servers to include in the load balancing scheme. 
+# It's best to use the servers' private IPs for better performance and security.
+# You can find the private IPs at your UpCloud control panel Network section.
+upstream backend {
+   server 172.31.43.253; 
+   server 172.31.37.241;
+}
+   # This server accepts all traffic to port 80 and passes it to the upstream. 
+   # Notice that the upstream name and the proxy_pass need to match.
+
+server { 
+
+   server_name mastermnd.benkonicek.com;
+
+   location / {
+       proxy_pass http://backend;
+   }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/mastermnd.benkonicek.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/mastermnd.benkonicek.com/privkey.pem; # managed by Certbot
+    #include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    ssl_protocols TLSv1.2;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP stapling
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+}
+
+
+
+server {
+    if ($host = mastermnd.benkonicek.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+   listen 80; 
+
+   server_name mastermnd.benkonicek.com;
+    return 404; # managed by Certbot
+
+
+}
