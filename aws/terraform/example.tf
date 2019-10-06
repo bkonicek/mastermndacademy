@@ -3,16 +3,29 @@ provider "aws" {
   region  = var.region
 }
 
-resource "aws_instance" "mastermnd" {
-  ami           = "ami-07d0cf3af28718ef8"
+resource "aws_instance" "mastermnd-ansible-control" {
+  ami           = "ami-04b9e92b5572fa0d1"
   instance_type = "t2.micro"
+  key_name      = "mastermnd"
   tags = {
-    Name = "MastermndTerraform"
+    Name = "Ansible control server"
   }
-
 }
 
-resource "aws_eip" "ip" {
-  vpc      = true
-  instance = aws_instance.mastermnd.id
+resource "aws_instance" "mastermnd-ansible-inventory1" {
+  ami           = "ami-04b9e92b5572fa0d1"
+  instance_type = "t2.micro"
+  key_name      = "mastermnd"
+  tags = {
+    Name = "Ansible inventory 1"
+  }
+}
+
+resource "aws_instance" "mastermnd-ansible-inventory2" {
+  ami           = "ami-04b9e92b5572fa0d1"
+  instance_type = "t2.micro"
+  key_name      = "mastermnd"
+  tags = {
+    Name = "Ansible inventory 2"
+  }
 }
