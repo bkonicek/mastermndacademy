@@ -3,29 +3,14 @@ provider "aws" {
   region  = var.region
 }
 
-resource "aws_instance" "mastermnd-ansible-control" {
-  ami           = "ami-04b9e92b5572fa0d1"
-  instance_type = "t2.micro"
-  key_name      = "mastermnd"
-  tags = {
-    Name = "Ansible control server"
-  }
-}
 
-resource "aws_instance" "mastermnd-ansible-inventory1" {
-  ami           = "ami-04b9e92b5572fa0d1"
-  instance_type = "t2.micro"
-  key_name      = "mastermnd"
+resource "aws_subnet" "subnet_create" {
+  vpc_id                  = "vpc-0e1aa59b3623fbc0a"
+  cidr_block              = "${var.subnets[count.index].cidr_range}"
+  availability_zone_id    = "${var.subnets[count.index].az}"
+  map_public_ip_on_launch = "${var.subnets[count.index].public_ip}"
   tags = {
-    Name = "Ansible inventory 1"
+    Name = "${var.subnets[count.index].name}"
   }
-}
-
-resource "aws_instance" "mastermnd-ansible-inventory2" {
-  ami           = "ami-04b9e92b5572fa0d1"
-  instance_type = "t2.micro"
-  key_name      = "mastermnd"
-  tags = {
-    Name = "Ansible inventory 2"
-  }
+  count = "${length(var.subnets)}"
 }
