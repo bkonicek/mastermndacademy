@@ -6,3 +6,6 @@ credentials.txt
 .terraform
 *.tfstate
 *.tfstate.*
+
+**/docker-examples/database/*
+**/docker-examples/html/*
